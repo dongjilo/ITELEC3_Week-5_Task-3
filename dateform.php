@@ -29,7 +29,7 @@ function printDue($dateLoan, $dateDue, $days, $months, $years) {
          '<br>Due date is: ' . $dateDue -> format('F j, Y') .
          '<br>Number of days lapse: ' . $days .
          '<br>Number of months lapse: ' . $months .
-         '<br>Number of years lapse: ' .$years .
+         '<br>Number of years lapse: ' . $years .
          '</p>
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>';
