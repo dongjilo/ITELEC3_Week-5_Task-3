@@ -87,7 +87,7 @@ function printDue($dateLoan, $dateDue, $days, $months, $years) {
                     $loanDate = new DateTime($_POST['txtLoan']);
                     $dueDate = new DateTime($_POST['txtDue']);
                     $interval = date_diff($loanDate, $dueDate);
-                    $totalMonths = $interval -> y * 12;
+                    $totalMonths = $interval -> format('%m') + $interval -> y * 12;
                     $totalDays = $interval -> days;
                     $totalYears = $interval -> y;
                     $isDue = ($dueDate > $loanDate) ? printDates($loanDate, $dueDate, $totalDays, $totalMonths, $totalYears) : printDue($loanDate, $dueDate, $totalDays, $totalMonths, $totalYears);
