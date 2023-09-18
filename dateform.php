@@ -1,29 +1,37 @@
 <?php
+session_start();
+$_SESSION['errorMsg'] = '<div class="alert alert-primary alert-dismissible d-flex align-items-center" role="alert">
+                          <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Info:"><use xlink:href="#info-fill"/></svg>
+                          <div>
+                            Please enter dates continue.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                          </div>
+                        </div>';
 function printDates($dateLoan, $dateDue, $days, $months, $years){
-    echo '<div class="alert alert-success alert-dismissible fade show" role="alert">
-          <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+    echo '<div class="alert alert-success alert-dismissible fade show mb-0" role="alert">
+          <svg class="bi flex-shrink-0" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
           <strong>Loan is not due yet.</strong>
           <p>Date loan is: ' . $dateLoan -> format('F d, Y') .
          '<br>Due date is: ' . $dateDue -> format('F d, Y') .
          '<br>Number of days until due: ' . $days .
          '<br>Number of months until due: ' . $months .
          '<br>Number of years until due: ' .$years .
-         '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </p>   
+         '</p>  
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> 
           </div>';
 }
 
 function printDue($dateLoan, $dateDue, $days, $months, $years) {
-    echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-          <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+    echo '<div class="alert alert-danger alert-dismissible fade show mb-0" role="alert">
+          <svg class="bi flex-shrink-0" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
           <strong>Loan is due.</strong>
-          <p>Date loan is: ' . $dateLoan -> format('F d, Y') .
-         '<br>Due date is: ' . $dateDue -> format('F d, Y') .
+          <p>Date loan is: ' . $dateLoan -> format('F j, Y') .
+         '<br>Due date is: ' . $dateDue -> format('F j, Y') .
          '<br>Number of days lapse: ' . $days .
          '<br>Number of months lapse: ' . $months .
          '<br>Number of years lapse: ' .$years .
-         '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </p>
+         '</p>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>';
 }
 ?>
@@ -40,7 +48,7 @@ function printDue($dateLoan, $dateDue, $days, $months, $years) {
     <title>Loan Calculator</title>
 </head>
 
-<body style="background-color: #f8f9fa;">
+<body style="background-color: #eee;">
 
 <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
     <symbol id="check-circle-fill" viewBox="0 0 16 16">
@@ -54,50 +62,42 @@ function printDue($dateLoan, $dateDue, $days, $months, $years) {
     </symbol>
 </svg>
 
-    <div class="container mt-5">
-        <div class="card border-primary">
+    <div class="container d-flex justify-content-center" style="margin-top: 8%;">
+        <div class="card border-primary w-50">
             <div class="card-header bg-primary text-white">
-                <h1 class="h3">PARA SA MGA UTANG!!!!</h1>
+                <h1 class="h2 pb-0 pt-2 text-center">Loan Calculator</h1>
             </div>
-            <div class="card-body" name="cardbody" id="cardbody">
+            <div class="card-body p-3" name="cardbody" id="cardbody">
                 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" class="form" method="post">
-                    <div class="mb-3">
+                    <div class="mb-2 form-floating">
+                        <input type="date" name="txtLoan" id="txtLoan" class="form-control" placeholder="DD/MM/YYYY">
+                        <label for="txtLoan">Enter loan date:</label>
+                    </div>
 
-                        <label for="txtLoan" class="form-label">Enter loan date:</label>
-                        <input type="date" name="txtLoan" id="txtLoan" class="form-control">
-
-                        <label for="txtDue" class="form-label mt-1">Enter due date:</label>
-                        <input type="date" name="txtDue" id="txtDue" class="form-control">
+                    <div class="mb-2 form-floating">
+                        <input type="date" name="txtDue" id="txtDue" class="form-control" placeholder="DD/MM/YYYY">
+                        <label for="txtDue">Enter due date:</label>
                     </div>
                     <button type="submit" class="btn btn-success">Check Lapse</button>
                 </form>
-
-                <hr>
-
+            <hr>
                 <?php
-                if (isset($_POST['txtLoan']) && isset($_POST['txtLoan'])) {
+                if (!empty($_POST['txtLoan']) && !empty($_POST['txtDue'])) {
+                    unset($_SESSION['errorMsg']);
                     $loanDate = new DateTime($_POST['txtLoan']);
                     $dueDate = new DateTime($_POST['txtDue']);
-
-                    if ($dueDate > $loanDate) {
-                        $loanDate -> format('F d Y');
-                        $dueDate -> format('F d Y');
-                        $interval = date_diff($loanDate, $dueDate);
-                        $totalMonths = $interval->y * 12 + $interval->m;
-                        $totalDays = $interval->days;
-                        $totalYears = $interval->y;
-                        echo printDates($loanDate, $dueDate, $totalDays, $totalMonths, $totalYears);
-                    } else {
-                        $loanDate -> format('F d Y');
-                        $dueDate -> format('F d Y');
-                        $interval = date_diff($loanDate, $dueDate);
-                        $totalMonths = $interval->y * 12 + $interval->m;
-                        $totalDays = $interval->days;
-                        $totalYears = $interval->y;
-                        echo printDue($loanDate, $dueDate, $totalDays, $totalMonths, $totalYears);
-                    }
+                    $interval = date_diff($loanDate, $dueDate);
+                    $totalMonths = $interval -> y * 12;
+                    $totalDays = $interval -> days;
+                    $totalYears = $interval -> y;
+                    $isDue = ($dueDate > $loanDate) ? printDates($loanDate, $dueDate, $totalDays, $totalMonths, $totalYears) : printDue($loanDate, $dueDate, $totalDays, $totalMonths, $totalYears);
+                    echo $isDue;
+                } elseif (empty($_POST['txtLoan']) || empty($_POST['txtDue'])) {
+                    echo $_SESSION['errorMsg'];
                 }
-
                 ?>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
